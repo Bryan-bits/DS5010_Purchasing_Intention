@@ -1,0 +1,47 @@
+import pandas as pd
+from scipy.stats import mannwhitneyu
+
+# test_pagevalues_vs_revenue.py
+
+def test_pagevalues_vs_revenue():
+    # Load dataset
+    df = pd.read_csv("/Users/bryany/Documents/Bryan_codes/DS5010_FInal_Project/online_shoppers_intention.csv")
+    
+    # Check if required columns exist
+    assert 'PageValues' in df.columns, "PageValues column is missing"
+    assert 'Revenue' in df.columns, "Revenue column is missing"
+    
+    # Check data types
+    assert pd.api.types.is_numeric_dtype(df['PageValues']), "PageValues is not numeric"
+    assert pd.api.types.is_bool_dtype(df['Revenue']), "Revenue is not boolean"
+    
+    # Perform Mann-Whitney U test
+    revenue_true = df[df['Revenue'] == True]['PageValues']
+    revenue_false = df[df['Revenue'] == False]['PageValues']
+    stat, p_value = mannwhitneyu(revenue_true, revenue_false, alternative='two-sided')
+    
+    # Assert that the test runs successfully
+    assert p_value is not None, "Statistical test failed"
+    print(f"Mann-Whitney U test statistic: {stat}, p-value: {p_value}")
+
+# Run the test
+if __name__ == "__main__":
+    test_pagevalues_vs_revenue()import pandas as pd
+import seaborn as sns
+
+import matplotlib.pyplot as plt
+
+# Assuming df is already loaded and 'PageValues_Binned' is created
+plt.figure(figsize=(12, 6))
+
+# Create a boxplot for PageValues_Binned and Revenue
+sns.boxplot(x='PageValues_Binned', y='PageValues', hue='Revenue', data=df, palette='Set2')
+
+# Add title and labels
+plt.title("Boxplot: PageValues Distribution by Revenue and Binned PageValues")
+plt.xlabel("PageValues Binned")
+plt.ylabel("PageValues")
+plt.legend(title="Revenue", loc="upper right")
+
+plt.tight_layout()
+plt.show()
